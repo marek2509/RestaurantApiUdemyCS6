@@ -28,6 +28,5 @@ namespace RestaurantApiUdemyCS6.Controllers
 
             return Ok(result);
         }
-
     }
 }
