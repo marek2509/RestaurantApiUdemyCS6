@@ -18,8 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 //builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddTransient<IWeatherForecastService, WeatherForecastService>();
-
 
 builder.Services.AddDbContext<RestaurantDbContext>();
 builder.Services.AddScoped<RestaurantSeeder>();
