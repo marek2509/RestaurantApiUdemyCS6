@@ -17,6 +17,14 @@ namespace RestaurantApiUdemyCS6.Entities
                  .IsRequired()
                  .HasMaxLength(25);
 
+            modelBuilder.Entity<Restaurant>()
+               .Property(r => r.ContactEmail)
+               .IsRequired(false);
+
+            modelBuilder.Entity<Restaurant>()
+               .Property(r => r.ContactNumber)
+               .IsRequired(false);
+
             modelBuilder.Entity<Dish>()
                 .Property(r => r.Name)
                 .IsRequired();
