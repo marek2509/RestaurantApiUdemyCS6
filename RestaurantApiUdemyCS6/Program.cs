@@ -1,5 +1,6 @@
 using RestaurantApiUdemyCS6;
 using RestaurantApiUdemyCS6.Entities;
+using RestaurantApiUdemyCS6.Services;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,8 @@ builder.Services.AddScoped<RestaurantSeeder>();
 // Jako ¿e wstrzykujemy referencje do mappera musimy dodaæ serwisy automapera
 // do kontenera zale¿noœci 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddScoped<IRestaurantService, RestaurantService>();
+
 
 var app = builder.Build();
 
