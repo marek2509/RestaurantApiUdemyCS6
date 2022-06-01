@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RestaurantApiUdemyCS6.Entities;
+using RestaurantApiUdemyCS6.Models;
 
 namespace RestaurantApiUdemyCS6.Controllers
 {
@@ -7,34 +10,44 @@ namespace RestaurantApiUdemyCS6.Controllers
     public class RestaurantController : Controller
     {
         private readonly RestaurantDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public RestaurantController(RestaurantDbContext dbContext)
+        public RestaurantController(RestaurantDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Restaurant>> GetAll()
+        public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
-            var restaurants = _dbContext.Restaurants.ToList();
-            Console.WriteLine("ło kurde 1");
-            return Ok(restaurants);
+            var restaurants = _dbContext
+                .Restaurants
+                .Include(r => r.Address)
+                .Include(r => r.Dishes)
+                .ToList();
+
+            var restaurantDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
+
+            return Ok(restaurantDtos);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Restaurant> Get([FromRoute] int id)
+        public ActionResult<RestaurantDto> Get([FromRoute] int id)
         {
             var restaurant = _dbContext
                 .Restaurants
+                .Include(r => r.Address)
+                .Include(r => r.Dishes)
                 .FirstOrDefault(r => r.Id == id);
-            Console.WriteLine("ło kurde");
            
             if (restaurant is null)
             {
                 return NotFound();
             }
   
-            return Ok(restaurant);
+            var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
+            return Ok(restaurantDto);
         }
     }
 }

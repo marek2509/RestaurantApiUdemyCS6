@@ -1,8 +1,8 @@
 using RestaurantApiUdemyCS6;
 using RestaurantApiUdemyCS6.Entities;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 /*
      // NLog: Setup NLog for Dependency injection
@@ -12,15 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 
  */
 
-
-
 // Add services to the container.
 
-builder.Services.AddControllers();
 //builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddControllers();
 builder.Services.AddDbContext<RestaurantDbContext>();
 builder.Services.AddScoped<RestaurantSeeder>();
+
+// Jako ¿e wstrzykujemy referencje do mappera musimy dodaæ serwisy automapera
+// do kontenera zale¿noœci 
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
