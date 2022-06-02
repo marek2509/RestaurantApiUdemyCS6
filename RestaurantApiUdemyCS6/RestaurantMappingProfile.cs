@@ -23,6 +23,8 @@ namespace RestaurantApiUdemyCS6
                    PostalCode = dto.PostalCode,
                    Street = dto.Street,
                }));
+
+            CreateMap<CreateDishDto, Dish>();
         }
     }
 }
