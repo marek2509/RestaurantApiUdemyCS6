@@ -1,6 +1,7 @@
 using NLog.Web;
 using RestaurantApiUdemyCS6;
 using RestaurantApiUdemyCS6.Entities;
+using RestaurantApiUdemyCS6.Middleware;
 using RestaurantApiUdemyCS6.Services;
 using System.Reflection;
 
@@ -25,19 +26,22 @@ builder.Services.AddScoped<RestaurantSeeder>();
 // do kontenera zale¿noœci 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IRestaurantService, RestaurantService>();
-
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<RestaurantSeeder>();
 seeder.Seed();
+
 if (app.Environment.IsDevelopment())
 {
    app.UseDeveloperExceptionPage();
 }
 
 // Configure the HTTP request pipeline.
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
