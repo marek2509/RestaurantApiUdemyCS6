@@ -1,3 +1,4 @@
+using NLog.Web;
 using RestaurantApiUdemyCS6;
 using RestaurantApiUdemyCS6.Entities;
 using RestaurantApiUdemyCS6.Services;
@@ -5,13 +6,12 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*
+
      // NLog: Setup NLog for Dependency injection
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
 
- */
 
 // Add services to the container.
 

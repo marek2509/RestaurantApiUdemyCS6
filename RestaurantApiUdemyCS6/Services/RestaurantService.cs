@@ -14,16 +14,17 @@ namespace RestaurantApiUdemyCS6.Services
         bool Update(int id, UpdateRestaurantDto dto);
     }
 
-
     public class RestaurantService : IRestaurantService
     {
         private readonly RestaurantDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public RestaurantService(RestaurantDbContext dbContext, IMapper mapper)
+        public RestaurantService(RestaurantDbContext dbContext, IMapper mapper, ILogger<RestaurantService> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public bool Update(int id, UpdateRestaurantDto dto)
@@ -43,10 +44,10 @@ namespace RestaurantApiUdemyCS6.Services
             return true;
         }
 
-
-
         public bool Delete(int id)
         {
+            _logger.LogError($"Restaurant with id: {id} DELETE action invoked");
+
             var restaurant = _dbContext
                   .Restaurants
                   .FirstOrDefault(r => r.Id == id);
