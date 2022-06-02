@@ -11,6 +11,7 @@ namespace RestaurantApiUdemyCS6.Services
         IEnumerable<RestaurantDto> GetAll();
         int Create(CreateRestaurantDto dto);
         bool Delete(int id);
+        bool Update(int id, UpdateRestaurantDto dto);
     }
 
 
@@ -24,6 +25,25 @@ namespace RestaurantApiUdemyCS6.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
+
+        public bool Update(int id, UpdateRestaurantDto dto)
+        {
+            var restaurantToUpdate = _dbContext
+                .Restaurants
+                .FirstOrDefault(r => r.Id == id);
+
+            if (restaurantToUpdate is null) return false;
+
+            restaurantToUpdate.Name = dto.Name;
+            restaurantToUpdate.Description= dto.Description;
+            restaurantToUpdate.HasDelivery = dto.HasDelivery;
+
+            _dbContext.SaveChanges();
+
+            return true;
+        }
+
+
 
         public bool Delete(int id)
         {

@@ -16,6 +16,26 @@ namespace RestaurantApiUdemyCS6.Controllers
             _restaurantService = restaurantService;
         }
 
+        [HttpPut("{id}")]
+        public ActionResult Update([FromRoute]int id, [FromBody]UpdateRestaurantDto dto)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            var isUpdated = _restaurantService.Update(id, dto);
+
+            if (!isUpdated)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
