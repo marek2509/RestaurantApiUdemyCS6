@@ -1,4 +1,6 @@
-﻿namespace RestaurantApiUdemyCS6.Middleware
+﻿using RestaurantApiUdemyCS6.Exceptions;
+
+namespace RestaurantApiUdemyCS6.Middleware
 {
     public class ErrorHandlingMiddleware : IMiddleware
     {
@@ -15,6 +17,11 @@
             try
             {
                await next.Invoke(context);
+            }
+            catch (NotFoundException notFoundEception)
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync(notFoundEception.Message);
             }
             catch (Exception e)
             {
