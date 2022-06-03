@@ -16,11 +16,27 @@ namespace RestaurantApiUdemyCS6.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromRoute] int restaurantId, [FromBody]CreateDishDto dto)
+        public ActionResult Post([FromRoute] int restaurantId, [FromBody] CreateDishDto dto)
         {
             var dishId = _dishService.Create(restaurantId, dto);
 
-            return Created($"api/{restaurantId}/dish/{dishId}", null);
-        } 
+            return Created($"api/restaurant/{restaurantId}/dish/{dishId}", null);
+        }
+        
+        [HttpGet("{dishId}")]        
+        public ActionResult<DishDto> Get([FromRoute] int restaurantId, [FromRoute] int dishId)
+        {
+            DishDto dish = _dishService.GetById(restaurantId, dishId);
+
+            return Ok(dish);
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<DishDto>> GetAll([FromRoute] int restaurantId)
+        {
+            var dishes = _dishService.GetAll(restaurantId);
+
+            return Ok(dishes);
+        }
     }
 }
