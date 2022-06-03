@@ -22,8 +22,8 @@ namespace RestaurantApiUdemyCS6.Controllers
 
             return Created($"api/restaurant/{restaurantId}/dish/{dishId}", null);
         }
-        
-        [HttpGet("{dishId}")]        
+
+        [HttpGet("{dishId}")]
         public ActionResult<DishDto> Get([FromRoute] int restaurantId, [FromRoute] int dishId)
         {
             DishDto dish = _dishService.GetById(restaurantId, dishId);
@@ -37,6 +37,21 @@ namespace RestaurantApiUdemyCS6.Controllers
             var dishes = _dishService.GetAll(restaurantId);
 
             return Ok(dishes);
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteAll([FromRoute] int restaurantId)
+        {
+            _dishService.RemoveAll(restaurantId);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{dishId}")]
+        public ActionResult DeleteById([FromRoute] int restaurantId, [FromRoute] int dishId)
+        {
+            _dishService.RemoveById(restaurantId, dishId);
+            return NoContent();
         }
     }
 }

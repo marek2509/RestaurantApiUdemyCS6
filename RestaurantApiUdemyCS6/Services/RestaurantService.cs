@@ -6,7 +6,7 @@ using RestaurantApiUdemyCS6.Models;
 
 namespace RestaurantApiUdemyCS6.Services
 {
-    public interface IRestaurantService
+    public interface IRestaurantService 
     {
         RestaurantDto GetById(int id);
         IEnumerable<RestaurantDto> GetAll();

@@ -11,6 +11,8 @@ namespace RestaurantApiUdemyCS6.Services
         int Create(int restaurantId, CreateDishDto dto);
         DishDto GetById(int restaurantId, int dishId);
         IEnumerable<DishDto> GetAll(int restaurantId);
+        void RemoveAll(int restaurantId);
+        void RemoveById(int restaurantId, int dishId);
     }
 
     public class DishService : IDishService
@@ -27,13 +29,7 @@ namespace RestaurantApiUdemyCS6.Services
 
         public int Create(int restaurantId, CreateDishDto dto)
         {
-            var restaurant = _dbContext.Restaurants
-                .FirstOrDefault(r => r.Id == restaurantId);
-
-            if (restaurant is null)
-            {
-                throw new NotFoundException("Restaurant not found");
-            }
+            var restaurant = GetRestaurantById(restaurantId);
 
             var dish = _mapper.Map<Dish>(dto);
 
@@ -48,12 +44,7 @@ namespace RestaurantApiUdemyCS6.Services
 
         public DishDto GetById(int restaurantId, int dishId)
         {
-            var restaurant = _dbContext.Restaurants.FirstOrDefault(r => r.Id == restaurantId);
-
-            if(restaurant is null)
-            {
-                throw new NotFoundException("Restaurant not found");
-            }
+            var restaurant = GetRestaurantById(restaurantId);
 
             var dish = _dbContext.Dishes.FirstOrDefault(d => d.Id == dishId);
 
@@ -69,8 +60,39 @@ namespace RestaurantApiUdemyCS6.Services
 
         public IEnumerable<DishDto> GetAll(int restaurantId)
         {
-            var restaurant = _dbContext.Restaurants
-                .Include(r => r.Dishes)                
+            var restaurant = GetRestaurantById(restaurantId);
+
+            var dishesDto = _mapper.Map<List<DishDto>>(restaurant.Dishes);
+
+          if(dishesDto is null || dishesDto.Count == 0)
+          {
+              throw new NotFoundException("This restaurant doesn't have dishes.");
+          }
+            return dishesDto;
+        }
+
+        public void RemoveAll(int restaurantId)
+        {
+            //_logger.LogError($"Dishes with restaurant id: {restaurantId} DELETE action invoked");
+
+            var restaurant = GetRestaurantById(restaurantId);
+
+            var dishes = restaurant.Dishes;
+
+            if(dishes is null)
+            {
+                throw new NotFoundException("Dishes not found");
+            }
+
+            _dbContext.Dishes.RemoveRange(dishes);
+            _dbContext.SaveChanges();
+        }
+
+        private Restaurant GetRestaurantById(int restaurantId)
+        {
+            var restaurant = _dbContext
+                .Restaurants
+                .Include(r => r.Dishes)
                 .FirstOrDefault(r => r.Id == restaurantId);
 
             if (restaurant is null)
@@ -78,13 +100,22 @@ namespace RestaurantApiUdemyCS6.Services
                 throw new NotFoundException("Restaurant not found");
             }
 
-            var dishesDto = _mapper.Map<List<DishDto>>(restaurant.Dishes);
+            return restaurant;
+        }
 
-          if(dishesDto.Count == 0)
-          {
-              throw new NotFoundException("This restaurant doesn't have dishes.");
-          }
-            return dishesDto;
+        public void RemoveById(int restaurantId, int dishId)
+        {
+            var restaurant = GetRestaurantById(restaurantId);
+
+            var dish = restaurant.Dishes.FirstOrDefault(d => d.Id == dishId);
+
+            if (dish is null)
+            {
+                throw new NotFoundException("Dishes not found");
+            }
+
+            _dbContext.Dishes.Remove(dish);
+            _dbContext.SaveChanges();
 
         }
     }
