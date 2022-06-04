@@ -8,17 +8,24 @@ namespace RestaurantApiUdemyCS6.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-        private IAccountService _service;
+        private IAccountService _accountService;
         public AccountController(IAccountService service)
         {
-            _service = service;
+            _accountService = service;
         }
 
         [HttpPost("register")]
         public ActionResult RegisterUser([FromBody] RegisterUserDto dto)
         {
-            _service.RegisterUser(dto);
+            _accountService.RegisterUser(dto);
             return Ok();
+        }
+
+        [HttpPost("login")]
+        public ActionResult Login([FromBody] LoginDto dto)
+        {
+            string token = _accountService.GenerateJwt(dto);
+            return Ok(token);
         }
     }
 }
