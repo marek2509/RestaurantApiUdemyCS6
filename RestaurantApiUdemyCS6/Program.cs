@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using NLog.Web;
 using RestaurantApiUdemyCS6;
 using RestaurantApiUdemyCS6.Entities;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<RequestTimeMiddleware>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddSwaggerGen();
 

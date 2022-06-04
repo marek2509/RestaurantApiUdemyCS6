@@ -30,10 +30,6 @@ namespace RestaurantApiUdemyCS6.Entities
             modelBuilder.Entity<User>()
                 .Property(u => u.Lastname)
                 .IsRequired(false);
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.PasswordHash)
-                .IsRequired(false);
             // aż do tąd, poźniej usunąć!
 
             modelBuilder.Entity<Restaurant>()
