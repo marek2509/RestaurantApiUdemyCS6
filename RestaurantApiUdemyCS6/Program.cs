@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
 using RestaurantApiUdemyCS6;
 using RestaurantApiUdemyCS6.Entities;
@@ -9,19 +10,41 @@ using RestaurantApiUdemyCS6.Models;
 using RestaurantApiUdemyCS6.Models.Validator;
 using RestaurantApiUdemyCS6.Services;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-     // NLog: Setup NLog for Dependency injection
-    builder.Logging.ClearProviders();
-    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-    builder.Host.UseNLog();
+// NLog: Setup NLog for Dependency injection
+builder.Logging.ClearProviders();
+builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+builder.Host.UseNLog();
 
 
 // Add services to the container.
 
 //builder.Services.AddEndpointsApiExplorer();
+var authenticationSettings = new AuthenticationSettings();
+builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = "Bearer";
+    option.DefaultScheme = "Bearer";
+    option.DefaultChallengeScheme = "Bearer";
+
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false; 
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = authenticationSettings.JwtIssuer, // wydawca tokenu
+        ValidAudience = authenticationSettings.JwtIssuer, // kto mo¿e korzystaæ z tokenu, ta sama wartoœæ bo korzstamy w obrêbie naszej aplikacji
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+        .GetBytes(authenticationSettings.JwtKey)), //kluczy prywatny wygenerowany na podstawie JwtKey zapisanej w appsettings.json
+    };
+});
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<RestaurantDbContext>();
@@ -48,13 +71,14 @@ seeder.Seed();
 
 if (app.Environment.IsDevelopment())
 {
-   app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
 }
 
 // Configure the HTTP request pipeline.
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<RequestTimeMiddleware>();
+app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.UseSwagger();
