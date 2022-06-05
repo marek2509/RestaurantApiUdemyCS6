@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RestaurantApiUdemyCS6.Entities;
 using RestaurantApiUdemyCS6.Models;
 using RestaurantApiUdemyCS6.Services;
+using System.Security.Claims;
 
 namespace RestaurantApiUdemyCS6.Controllers
 {
@@ -22,7 +23,7 @@ namespace RestaurantApiUdemyCS6.Controllers
         [HttpPut("{id}")]
         public ActionResult Update([FromRoute]int id, [FromBody]UpdateRestaurantDto dto)
         {
-           _restaurantService.Update(id, dto);
+           _restaurantService.Update(id, dto, User);
 
             return Ok();
         }
@@ -30,7 +31,7 @@ namespace RestaurantApiUdemyCS6.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-           _restaurantService.Delete(id);
+           _restaurantService.Delete(id, User);
 
             return NoContent();
         }
@@ -40,8 +41,8 @@ namespace RestaurantApiUdemyCS6.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public ActionResult CreateRestaurant([FromBody]CreateRestaurantDto dto)
         {
-            HttpContext.User.IsInRole("Admin");
-           var id = _restaurantService.Create(dto);
+           var userId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
+           var id = _restaurantService.Create(dto, userId);
 
             return Created($"/api/restaurant/{id}", null);
         }
