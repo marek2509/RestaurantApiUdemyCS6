@@ -47,10 +47,15 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
-builder.Services.AddControllers();
+
+builder.Services.AddAuthorization(option => {
+    option.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "Polish"));
+});
+
+//builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddDbContext<RestaurantDbContext>();
 builder.Services.AddScoped<RestaurantSeeder>();
-builder.Services.AddControllers().AddFluentValidation();
 // Jako ¿e wstrzykujemy referencje do mappera musimy dodaæ serwisy automapera
 // do kontenera zale¿noœci 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

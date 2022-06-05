@@ -22,7 +22,10 @@ namespace RestaurantApiUdemyCS6.Entities
                 .Property(r => r.Name)
                 .IsRequired();
 
-            // przejściowe zmiany do usunięcia 
+            modelBuilder.Entity<User>()
+               .Property(u => u.Nationality)
+               .IsRequired(false);
+
             modelBuilder.Entity<User>()
                 .Property(u => u.Firstname)
                 .IsRequired(false);
@@ -30,7 +33,6 @@ namespace RestaurantApiUdemyCS6.Entities
             modelBuilder.Entity<User>()
                 .Property(u => u.Lastname)
                 .IsRequired(false);
-            // aż do tąd, poźniej usunąć!
 
             modelBuilder.Entity<Restaurant>()
                  .Property(r => r.Name)
