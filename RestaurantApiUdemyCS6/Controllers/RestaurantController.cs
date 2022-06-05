@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestaurantApiUdemyCS6.Entities;
@@ -7,8 +8,9 @@ using RestaurantApiUdemyCS6.Services;
 
 namespace RestaurantApiUdemyCS6.Controllers
 {
-    [ApiController]
     [Route("api/restaurant")]
+    [ApiController]
+    [Authorize] // jeśli takie zapytanie nie będzie zawierać nagłówka autoryzacji to dostaniemy  kod 401 automatycznie
     public class RestaurantController : Controller
     {
         private readonly IRestaurantService _restaurantService;
@@ -51,6 +53,7 @@ namespace RestaurantApiUdemyCS6.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous] // gdy mamy [Authorize] nadany wyżej to tu można go dezaktywować dla wybranej metody
         public ActionResult<RestaurantDto> Get([FromRoute] int id)
         {
             var restaurant = _restaurantService.GetById(id);

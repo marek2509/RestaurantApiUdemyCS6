@@ -85,6 +85,8 @@ app.UseHttpsRedirection();
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Restaurant API"));
 
+
+
 app.UseAuthorization();
 
 app.MapControllers();
