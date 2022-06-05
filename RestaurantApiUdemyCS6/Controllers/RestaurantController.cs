@@ -37,8 +37,10 @@ namespace RestaurantApiUdemyCS6.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult CreateRestaurant([FromBody]CreateRestaurantDto dto)
         {
+            HttpContext.User.IsInRole("Admin");
            var id = _restaurantService.Create(dto);
 
             return Created($"/api/restaurant/{id}", null);
