@@ -48,7 +48,7 @@ namespace RestaurantApiUdemyCS6.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "Atleast20")] // musi się pokrywać z nazwą zadeklarowaną w klasie program
+        [Authorize(Policy = "HasMinimum2Restaurant")] // musi się pokrywać z nazwą zadeklarowaną w klasie program
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantDtos = _restaurantService.GetAll();
