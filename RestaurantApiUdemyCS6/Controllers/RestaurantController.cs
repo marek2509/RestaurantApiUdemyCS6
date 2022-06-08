@@ -21,9 +21,9 @@ namespace RestaurantApiUdemyCS6.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Update([FromRoute]int id, [FromBody]UpdateRestaurantDto dto)
+        public ActionResult Update([FromRoute] int id, [FromBody] UpdateRestaurantDto dto)
         {
-           _restaurantService.Update(id, dto);
+            _restaurantService.Update(id, dto);
 
             return Ok();
         }
@@ -31,7 +31,7 @@ namespace RestaurantApiUdemyCS6.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-           _restaurantService.Delete(id);
+            _restaurantService.Delete(id);
 
             return NoContent();
         }
@@ -39,19 +39,20 @@ namespace RestaurantApiUdemyCS6.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Manager")]
-        public ActionResult CreateRestaurant([FromBody]CreateRestaurantDto dto)
+        public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto dto)
         {
-         
-           var id = _restaurantService.Create(dto);
+
+            var id = _restaurantService.Create(dto);
 
             return Created($"/api/restaurant/{id}", null);
         }
 
+        //[Authorize(Policy = "HasMinimum2Restaurant")] // musi się pokrywać z nazwą zadeklarowaną w klasie program
         [HttpGet]
-        [Authorize(Policy = "HasMinimum2Restaurant")] // musi się pokrywać z nazwą zadeklarowaną w klasie program
-        public ActionResult<IEnumerable<RestaurantDto>> GetAll([FromQuery]string? searchPhrase)
+        [AllowAnonymous]
+        public ActionResult<IEnumerable<RestaurantDto>> GetAll([FromQuery]RestaurantQuery query)
         {
-            var restaurantDtos = _restaurantService.GetAll(searchPhrase);
+            var restaurantDtos = _restaurantService.GetAll(query);
 
             return Ok(restaurantDtos);
         }
