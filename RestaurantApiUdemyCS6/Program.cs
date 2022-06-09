@@ -80,11 +80,23 @@ builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddHttpContextAccessor(); // dziêki temu bêdzie mo¿liwe wstrzykniêcie IhttpContextAccesor w klasie UserContextService
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendClient", policyBuilder =>
+    policyBuilder.AllowAnyMethod()
+    .AllowAnyHeader()
+    .WithOrigins(builder.Configuration["AllowedOrigins"])
+    );
+});
 var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<RestaurantSeeder>();
+app.UseCors("FrontendClient");
+
 seeder.Seed();
+
+
 
 if (app.Environment.IsDevelopment())
 {
