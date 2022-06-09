@@ -5,6 +5,7 @@ using RestaurantApiUdemyCS6.Authorization;
 using RestaurantApiUdemyCS6.Entities;
 using RestaurantApiUdemyCS6.Exceptions;
 using RestaurantApiUdemyCS6.Models;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace RestaurantApiUdemyCS6.Services
@@ -111,6 +112,24 @@ namespace RestaurantApiUdemyCS6.Services
                      .Include(r => r.Dishes)
                      .Where(r => query.SearchPhrase == null || (r.Name.ToLower().Contains(query.SearchPhrase.ToLower()) ||
                             r.Description.ToLower().Contains(query.SearchPhrase.ToLower())));
+
+            if (!string.IsNullOrEmpty(query.SortBy))
+            {
+                var columnsSelector = new Dictionary<string,
+                    Expression<Func<Restaurant, object>>>
+                {
+                    {nameof(Restaurant.Name), r => r.Name },
+                    {nameof(Restaurant.Description), r => r.Description },
+                    {nameof(Restaurant.Category), r => r.Category },
+                };
+
+                var selectorColumn = columnsSelector[query.SortBy];
+
+
+              baseQuery = query.SortDirection == SortDirection.ASC ?
+                    baseQuery.OrderBy(selectorColumn) 
+                    : baseQuery.OrderByDescending(selectorColumn);
+            }
 
             var restaurants = baseQuery
                      .Skip(query.PageSize * (query.PageNumber - 1))
