@@ -92,12 +92,11 @@ var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<RestaurantSeeder>();
+
+
+app.UseStaticFiles();
 app.UseCors("FrontendClient");
-
 seeder.Seed();
-
-
-
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
