@@ -2,6 +2,8 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
 using RestaurantApiUdemyCS6;
@@ -62,7 +64,6 @@ builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeReqiurementHandler>(
 builder.Services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
 //builder.Services.AddControllers();
 builder.Services.AddControllers().AddFluentValidation();
-builder.Services.AddDbContext<RestaurantDbContext>();
 builder.Services.AddScoped<RestaurantSeeder>();
 // Jako ¿e wstrzykujemy referencje do mappera musimy dodaæ serwisy automapera
 // do kontenera zale¿noœci 
@@ -88,8 +89,12 @@ builder.Services.AddCors(options =>
     .WithOrigins(builder.Configuration["AllowedOrigins"])
     );
 });
-var app = builder.Build();
 
+builder.Services.AddDbContext<RestaurantDbContext>(option => 
+option.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantDbConnection")));
+
+
+var app = builder.Build();
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<RestaurantSeeder>();
 
