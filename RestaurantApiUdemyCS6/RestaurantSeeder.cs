@@ -1,4 +1,5 @@
-﻿using RestaurantApiUdemyCS6.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using RestaurantApiUdemyCS6.Entities;
 
 namespace RestaurantApiUdemyCS6
 {
@@ -15,6 +16,12 @@ namespace RestaurantApiUdemyCS6
         {
             if (_dbContext.Database.CanConnect())
             {
+               var pendingMigrations =  _dbContext.Database.GetPendingMigrations();
+                if(pendingMigrations != null && pendingMigrations.Any())
+                {
+                    _dbContext.Database.Migrate();
+                }
+
                 if(!_dbContext.Roles.Any())
                 {
                    var roles = GetRoles();
